@@ -57,7 +57,7 @@ struct HomeView: View {
             .toolbar{
                 ToolbarItem(placement: .topBarLeading){
                     NavigationLink {
-                        SettingsView()
+                        ExploreView()
                     } label: {
                         Image(systemName: "gear")
                             .font(.title)

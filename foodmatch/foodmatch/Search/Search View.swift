@@ -65,7 +65,7 @@ struct Search_View: View {
             .toolbar {
                 ToolbarItem {
                     NavigationLink {
-                        SettingsView()
+                        ExploreView()
                     } label: {
                         Image(systemName: "gear")
                             .font(.title)
