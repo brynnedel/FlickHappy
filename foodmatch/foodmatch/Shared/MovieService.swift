@@ -121,6 +121,35 @@ struct MovieService {
         }
     }
     
+    public static func listTitles(type: String, source: Int, genre: Int) async throws -> [Title] {
+        let baseURL = "https://api.watchmode.com/v1/list-titles/"
+        
+        var components = URLComponents(string: baseURL)
+        components?.queryItems = [
+            URLQueryItem(name: "apiKey", value: "\(myKey)"),
+            URLQueryItem(name: "types", value: "\(type)"),
+            URLQueryItem(name: "source_ids", value: "\(source)"),
+            URLQueryItem(name: "genres", value: "\(genre)"),
+            URLQueryItem(name: "limit", value: "10")
+        ]
+        guard let url = components?.url else {fatalError("Invalid URL")}
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        do {
+            let (data, _) = try await session.data(for: request)
+            printData(data: data)
+            let response = try decoder.decode(ListTitlesResponse.self, from: data)
+            return response.titles
+        } catch {
+            print("this is the error: \(error.localizedDescription)")
+            throw error
+        }
+        
+        return []
+    }
+    
     private static func printData(data: Data) {
         let string = String(data: data, encoding: .utf8)!
         print(string)
