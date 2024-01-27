@@ -11,11 +11,11 @@ struct ContentView: View {
     @StateObject private var vm = ReleasesViewModel()
 
     var body: some View {
-        HomeView()
-            .environmentObject(vm)
-            .task {
-                await vm.loadReleases()
-            }
+        Search_View()
+//            .environmentObject(vm)
+//            .task {
+//                await vm.loadReleases()
+//            }
     }
 }
 

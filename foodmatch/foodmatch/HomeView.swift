@@ -9,7 +9,6 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject private var vm: ReleasesViewModel
-
     
     var body: some View {
         NavigationStack {

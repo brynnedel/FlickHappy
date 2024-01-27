@@ -13,10 +13,11 @@ import Foundation
 
 
 // MARK: - MovieResponse
-struct TitleDetails: Codable {
+struct TitleDetails: Codable, Identifiable {
     let id: Int
     let title, originalTitle, plotOverview, type: String
-    let runtimeMinutes, year, endYear: Int
+    let runtimeMinutes, year: Int
+    let endYear: JSONNull?
     let releaseDate, imdbID: String
     let tmdbID: Int
     let tmdbType: String
@@ -24,14 +25,14 @@ struct TitleDetails: Codable {
     let genreNames: [String]
     let userRating: Double
     let criticScore: Int
-    let usRating: String
+    let usRating: JSONNull?
     let poster, backdrop: String
     let originalLanguage: String
-    let similarTitles, networks: [Int]
-    let networkNames: [String]
+    let similarTitles: [Int]
+    let networks, networkNames: JSONNull?
+    let relevancePercentile: Double
     let trailer: String
     let trailerThumbnail: String
-    let relevancePercentile: Double
     let sources: [Source]
 
     enum CodingKeys: String, CodingKey {
@@ -56,9 +57,9 @@ struct TitleDetails: Codable {
         case similarTitles = "similar_titles"
         case networks
         case networkNames = "network_names"
+        case relevancePercentile = "relevance_percentile"
         case trailer
         case trailerThumbnail = "trailer_thumbnail"
-        case relevancePercentile = "relevance_percentile"
         case sources
     }
 }
@@ -66,10 +67,12 @@ struct TitleDetails: Codable {
 // MARK: - Source
 struct Source: Codable {
     let sourceID: Int
-    let name, type, region, iosURL: String
-    let androidURL: String?
+    let name: String
+    let type: SourceTypeEnum
+    let region: Region
+    let iosURL, androidURL: AndroidURLEnum
     let webURL: String
-    let format: String
+    let format: Format
     let price: Double?
     let seasons, episodes: Int
 
@@ -82,6 +85,31 @@ struct Source: Codable {
         case format, price, seasons, episodes
     }
 }
+
+enum AndroidURLEnum: String, Codable {
+    case deeplinksAvailableForPaidPlansOnly = "Deeplinks available for paid plans only."
+}
+
+enum Format: String, Codable {
+    case hd = "HD"
+    case sd = "SD"
+}
+
+enum Region: String, Codable {
+    case au = "AU"
+    case br = "BR"
+    case ca = "CA"
+    case gb = "GB"
+    case us = "US"
+}
+
+enum SourceTypeEnum: String, Codable {
+    case buy = "buy"
+    case rent = "rent"
+    case sub = "sub"
+}
+
+
 // MARK: - SearchResponse
 struct SearchResponse: Codable {
     let titleResults: [TitleResult]
@@ -94,13 +122,15 @@ struct SearchResponse: Codable {
 }
 
 // MARK: - PeopleResult
-struct PeopleResult: Codable {
+struct PeopleResult: Codable, Identifiable {
+    let resultType: String
     let id: Int
-    let name, mainProfession, imdbID: String
+    let name: String
+    let mainProfession, imdbID: JSONNull?
     let tmdbID: Int
 
     enum CodingKeys: String, CodingKey {
-        case id, name
+        case resultType, id, name
         case mainProfession = "main_profession"
         case imdbID = "imdb_id"
         case tmdbID = "tmdb_id"
@@ -108,21 +138,50 @@ struct PeopleResult: Codable {
 }
 
 // MARK: - TitleResult
-struct TitleResult: Codable {
+struct TitleResult: Codable, Identifiable {
+    let resultType: String
     let id: Int
     let name, type: String
-    let year: Int
-    let imdbID: String
+    let year: Int?
+    let imdbID: String?
     let tmdbID: Int
     let tmdbType: String
 
     enum CodingKeys: String, CodingKey {
-        case id, name, type, year
+        case resultType, id, name, type, year
         case imdbID = "imdb_id"
         case tmdbID = "tmdb_id"
         case tmdbType = "tmdb_type"
     }
 }
+
+// MARK: - Encode/decode helpers
+
+class JSONNull: Codable, Hashable {
+
+    public static func == (lhs: JSONNull, rhs: JSONNull) -> Bool {
+        return true
+    }
+
+    public var hashValue: Int {
+        return 0
+    }
+
+    public init() {}
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if !container.decodeNil() {
+            throw DecodingError.typeMismatch(JSONNull.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Wrong type for JSONNull"))
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encodeNil()
+    }
+}
+
 
 // MARK: - ListTitlesResponse
 struct ListTitlesResponse: Codable {
@@ -164,7 +223,7 @@ struct Release: Codable, Identifiable {
     let title: String
     let type: TypeEnum
     let tmdbID: Int
-    let tmdbType: TmdbType
+    let tmdbType: TmdbEnum
     let imdbID: String
     let seasonNumber: Int?
     let posterURL: String
@@ -187,24 +246,14 @@ struct Release: Codable, Identifiable {
     }
 }
 
-enum TmdbType: String, Codable {
-    case movie = "movie"
-    case tv = "tv"
-}
-
-enum TypeEnum: String, Codable {
-    case movie = "movie"
-    case tvMiniseries = "tv_miniseries"
-    case tvMovie = "tv_movie"
-    case tvSeries = "tv_series"
-}
-
 // MARK: - PersonResponse
-struct PersonResponse: Codable {
+struct PersonResponse: Codable, Identifiable {
     let id: Int
     let fullName, firstName, lastName: String
     let tmdbID: Int
     let imdbID, mainProfession, secondaryProfession, tertiaryProfession: String
+    let dateOfBirth: String
+    let dateOfDeath: JSONNull?
     let placeOfBirth, gender: String
     let headshotURL: String
     let knownFor: [Int]
@@ -220,6 +269,8 @@ struct PersonResponse: Codable {
         case mainProfession = "main_profession"
         case secondaryProfession = "secondary_profession"
         case tertiaryProfession = "tertiary_profession"
+        case dateOfBirth = "date_of_birth"
+        case dateOfDeath = "date_of_death"
         case placeOfBirth = "place_of_birth"
         case gender
         case headshotURL = "headshot_url"
@@ -229,3 +280,14 @@ struct PersonResponse: Codable {
 }
 
 
+enum TmdbEnum: String, Codable {
+    case movie = "movie"
+    case tv = "tv"
+}
+
+enum TypeEnum: String, Codable {
+    case movie = "movie"
+    case tvMiniseries = "tv_miniseries"
+    case tvMovie = "tv_movie"
+    case tvSeries = "tv_series"
+}
