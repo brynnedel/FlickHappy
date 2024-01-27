@@ -56,9 +56,9 @@ struct MovieService {
         
         do {
             let(data, _) = try await session.data(for: request)
-            printData(data: data)
+//            printData(data: data)
             let response = try decoder.decode(SearchResponse.self, from: data)
-            print(response)
+//            print(response)
             return response
         } catch {
             print("this is the error: \(error.localizedDescription)" )
@@ -83,13 +83,13 @@ struct MovieService {
         do{
             let(data, _) = try await session.data(for: request)
 //            print("title details data: ")
-//            printData(data: data)
+            printData(data: data)
             let response = try decoder.decode(TitleDetails.self, from: data)
-            print("title after decode")
-            print(response)
+//            print("title after decode")
+//            print(response)
             return response
         } catch {
-            print("this is the error: \(error.localizedDescription)")
+            print("this is the error in title: \(error.localizedDescription)")
             throw error
         }
     }

@@ -34,5 +34,5 @@ class ReleasesViewModel: ObservableObject {
 }
 
 extension ReleasesViewModel {
-    static let example = Release(id: 1, title: "Brynne", type: .movie, tmdbID: 1, tmdbType: .movie, imdbID: "imdbid", seasonNumber: 1, posterURL: "www", sourceReleaseDate: "aday", sourceID: 1, sourceName: "source", isOriginal: 1)
+    static let example = Release(id: 1, title: "Brynne", type: "movie", tmdbID: 1, tmdbType: "movie", imdbID: "imdbid", seasonNumber: 1, posterURL: "www", sourceReleaseDate: "aday", sourceID: 1, sourceName: "source", isOriginal: 1)
 }

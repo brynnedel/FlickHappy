@@ -85,7 +85,7 @@ struct HomeView: View {
         ScrollView(.horizontal){
             HStack (alignment: .top){
                 ForEach(releases) { release in
-                    if release.type.rawValue == "movie"{
+                    if release.type == "movie"{
                         NavigationLink {
                             MovieDetailsView(release: release)
                         } label: {
@@ -103,7 +103,7 @@ struct HomeView: View {
         ScrollView(.horizontal){
             HStack (alignment: .top){
                 ForEach(releases) { release in
-                    if release.type.rawValue == "tv_series" || release.type.rawValue == "tv_miniseries"{
+                    if release.type == "tv_series" || release.type == "tv_miniseries"{
                         NavigationLink {
                             MovieDetailsView(release: release)
                         } label: {

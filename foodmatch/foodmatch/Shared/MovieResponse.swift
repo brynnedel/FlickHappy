@@ -15,51 +15,57 @@ import Foundation
 // MARK: - MovieResponse
 struct TitleDetails: Codable, Identifiable {
     let id: Int
-    let title, originalTitle, plotOverview, type: String
-    let runtimeMinutes, year: Int
-    let endYear: JSONNull?
-    let releaseDate, imdbID: String
-    let tmdbID: Int
-    let tmdbType: String
-    let genres: [Int]
+    let title: String
+//    let originalTitle, 
+    let plotOverview: String?
+    let type: String?
+    let runtimeMinutes: Int?
+    let year: Int?
+//    let endYear: JSONNull?
+    let releaseDate: String?
+    let imdbID: String?
+    let tmdbID: Int?
+    let tmdbType: String?
+    let genres: [Int]?
     let genreNames: [String]
-    let userRating: Double
-    let criticScore: Int
-    let usRating: JSONNull?
-    let poster, backdrop: String
-    let originalLanguage: String
-    let similarTitles: [Int]
-    let networks, networkNames: JSONNull?
-    let relevancePercentile: Double
-    let trailer: String
-    let trailerThumbnail: String
-    let sources: [Source]
+//    let userRating: Double?
+//    let criticScore: Int?
+//    let usRating: JSONNull?
+    let poster: String?
+    let backdrop: String?
+//    let originalLanguage: String?
+//    let similarTitles: [Int]?
+//    let networks, networkNames: JSONNull?
+//    let relevancePercentile: Double?
+//    let trailer: String?
+//    let trailerThumbnail: String?
+    let sources: [Source]?
 
     enum CodingKeys: String, CodingKey {
         case id, title
-        case originalTitle = "original_title"
+//        case originalTitle = "original_title"
         case plotOverview = "plot_overview"
         case type
         case runtimeMinutes = "runtime_minutes"
         case year
-        case endYear = "end_year"
+//        case endYear = "end_year"
         case releaseDate = "release_date"
         case imdbID = "imdb_id"
         case tmdbID = "tmdb_id"
         case tmdbType = "tmdb_type"
         case genres
         case genreNames = "genre_names"
-        case userRating = "user_rating"
-        case criticScore = "critic_score"
-        case usRating = "us_rating"
+//        case userRating = "user_rating"
+//        case criticScore = "critic_score"
+//        case usRating = "us_rating"
         case poster, backdrop
-        case originalLanguage = "original_language"
-        case similarTitles = "similar_titles"
-        case networks
-        case networkNames = "network_names"
-        case relevancePercentile = "relevance_percentile"
-        case trailer
-        case trailerThumbnail = "trailer_thumbnail"
+//        case originalLanguage = "original_language"
+//        case similarTitles = "similar_titles"
+//        case networks
+//        case networkNames = "network_names"
+//        case relevancePercentile = "relevance_percentile"
+//        case trailer
+//        case trailerThumbnail = "trailer_thumbnail"
         case sources
     }
 }
@@ -67,14 +73,16 @@ struct TitleDetails: Codable, Identifiable {
 // MARK: - Source
 struct Source: Codable {
     let sourceID: Int
-    let name: String
-    let type: SourceTypeEnum
-    let region: Region
-    let iosURL, androidURL: AndroidURLEnum
-    let webURL: String
-    let format: Format
+    let name: String?
+    let type: SourceTypeEnum?
+    let region: String?
+    let iosURL: String?
+    let androidURL: AndroidURLEnum?
+    let webURL: String?
+    let format: Format?
     let price: Double?
-    let seasons, episodes: Int
+    let seasons: Int?
+    let episodes: Int?
 
     enum CodingKeys: String, CodingKey {
         case sourceID = "source_id"
@@ -95,13 +103,13 @@ enum Format: String, Codable {
     case sd = "SD"
 }
 
-enum Region: String, Codable {
-    case au = "AU"
-    case br = "BR"
-    case ca = "CA"
-    case gb = "GB"
-    case us = "US"
-}
+//enum Region: String, Codable {
+//    case au = "AU"
+//    case br = "BR"
+//    case ca = "CA"
+//    case gb = "GB"
+//    case us = "US"
+//}
 
 enum SourceTypeEnum: String, Codable {
     case buy = "buy"
@@ -221,9 +229,9 @@ struct ReleasesResponse: Codable {
 struct Release: Codable, Identifiable {
     let id: Int
     let title: String
-    let type: TypeEnum
+    let type: String?
     let tmdbID: Int
-    let tmdbType: TmdbEnum
+    let tmdbType: String?
     let imdbID: String
     let seasonNumber: Int?
     let posterURL: String
@@ -249,15 +257,16 @@ struct Release: Codable, Identifiable {
 // MARK: - PersonResponse
 struct PersonResponse: Codable, Identifiable {
     let id: Int
-    let fullName, firstName, lastName: String
-    let tmdbID: Int
-    let imdbID, mainProfession, secondaryProfession, tertiaryProfession: String
-    let dateOfBirth: String
-    let dateOfDeath: JSONNull?
-    let placeOfBirth, gender: String
-    let headshotURL: String
-    let knownFor: [Int]
-    let relevancePercentile: Int
+    let fullName: String
+    let firstName, lastName: String?
+    let tmdbID: Int?
+    let imdbID, mainProfession, secondaryProfession, tertiaryProfession: String?
+//    let dateOfBirth: String?
+//    let dateOfDeath: JSONNull?
+//    let placeOfBirth, gender: String?
+    let headshotURL: String?
+//    let knownFor: [Int]?
+//    let relevancePercentile: Int?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -269,13 +278,13 @@ struct PersonResponse: Codable, Identifiable {
         case mainProfession = "main_profession"
         case secondaryProfession = "secondary_profession"
         case tertiaryProfession = "tertiary_profession"
-        case dateOfBirth = "date_of_birth"
-        case dateOfDeath = "date_of_death"
-        case placeOfBirth = "place_of_birth"
-        case gender
+//        case dateOfBirth = "date_of_birth"
+//        case dateOfDeath = "date_of_death"
+//        case placeOfBirth = "place_of_birth"
+//        case gender
         case headshotURL = "headshot_url"
-        case knownFor = "known_for"
-        case relevancePercentile = "relevance_percentile"
+//        case knownFor = "known_for"
+//        case relevancePercentile = "relevance_percentile"
     }
 }
 
