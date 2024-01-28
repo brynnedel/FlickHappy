@@ -8,6 +8,21 @@
 import SwiftUI
 
 struct ExploreView: View {
+    func getType(type: String) -> String {
+        switch type {
+            case "movie":
+                return "Movie"
+            case "tv_series":
+                return "Series"
+            case "tv_miniseries":
+                return "Mini Series"
+            case "short_film":
+                return "Short Film"
+            default:
+                return ""
+            }
+    }
+    
     var sourceID: Int {
         switch source {
         case "Netflix":
@@ -95,7 +110,9 @@ struct ExploreView: View {
                         case .loading:
                             loadingView
                         case .success(let response):
-                            ExploreResultsView(titles: response)
+                            resultsView(titles: response)
+                        case .detailSuccess(let details):
+                            MovieDetailsView(poster: details.poster, title: details.title, date: details.releaseDate, sources: details.sources, description: details.plotOverview)
                         case .error(let error):
                             errorView(error)
                         }
@@ -104,6 +121,53 @@ struct ExploreView: View {
                 
             }
             .navigationTitle("Explore New Titles")
+            .toolbar {
+                ToolbarItem (placement: .topBarTrailing) {
+                    Button("Reset") {
+                        type = ""
+                        genre = ""
+                        source = ""
+                        vm.state = .idle
+                    }
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func resultsView(titles: [Title]) -> some View {
+        ScrollView {
+            ZStack {
+                Color("Background")
+                    .ignoresSafeArea()
+                VStack (alignment: .leading) {
+                    ForEach(titles) { title in
+                        Button {
+                            Task {
+                                await vm.getTitleDetails(id: title.id)
+                            }
+                        } label: {
+                            RoundedRectangle(cornerRadius: 15)
+                                .foregroundStyle(Color("Accent"))
+                                .frame(height: 100)
+                                .overlay {
+                                    VStack {
+                                        Text(title.title)
+                                            .font(.title2)
+                                        Text(self.getType(type: title.type))
+                                    }
+                                }
+                                .padding()
+                        }
+                        .buttonStyle(.plain)
+                    
+                        Rectangle()
+                            .frame(height: 1)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 8)
+                    }
+                }
+            }
         }
     }
     
@@ -120,13 +184,13 @@ struct ExploreView: View {
                             .multilineTextAlignment(.center)
                     }
                     .padding(.horizontal, 8)
-                    
+                
                 Rectangle()
                     .foregroundStyle(.white)
                     .frame(height: 1)
                     .padding()
                 
-
+                
                 VStack (alignment: .leading) {
                     Text("Media Type")
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]) {
@@ -145,7 +209,7 @@ struct ExploreView: View {
                                     .overlay {
                                         Text(type)
                                             .foregroundStyle(.white)
-        
+                                        
                                     }
                             }
                             .buttonStyle(.plain)
@@ -171,7 +235,7 @@ struct ExploreView: View {
                                     .overlay {
                                         Text(genre)
                                             .foregroundStyle(.white)
-        
+                                        
                                     }
                             }
                             .buttonStyle(.plain)
@@ -225,13 +289,10 @@ struct ExploreView: View {
                             .buttonStyle(.plain)
                         }
                     }
-                
-                Spacer()
-                
+                    
+                    Spacer()
+                }
             }
-            
-            }
-            
         }
         .padding(.horizontal)
     }

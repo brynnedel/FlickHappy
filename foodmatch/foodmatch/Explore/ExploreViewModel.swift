@@ -11,6 +11,7 @@ enum ExploreLoadingState {
     case idle
     case loading
     case success(titles: [Title])
+    case detailSuccess(TitleDetails: TitleDetails)
     case error(error: Error)
 }
 
@@ -30,6 +31,22 @@ class ExploreViewModel: ObservableObject {
                 self.state = .error(error: error)
             }
         }
+    }
+    
+    func getTitleDetails(id: Int) async {
+        Task {
+            do {
+                self.state = .loading
+                let details = try await MovieService.getTitleDetails(id: id)
+                self.state = .detailSuccess(TitleDetails: details)
+            } catch {
+                self.state = .error(error: error)
+            }
+        }
+    }
+    
+    func resetPage() async {
+        self.state = .idle
     }
 }
 

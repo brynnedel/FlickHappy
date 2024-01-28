@@ -59,7 +59,7 @@ struct HomeView: View {
                     NavigationLink {
                         ExploreView()
                     } label: {
-                        Image(systemName: "gear")
+                        Image(systemName: "safari")
                             .font(.title)
                             .foregroundStyle(.black)
                     }
@@ -87,7 +87,7 @@ struct HomeView: View {
                 ForEach(releases) { release in
                     if release.type == "movie"{
                         NavigationLink {
-                            MovieDetailsView(release: release)
+                            MovieDetailsView(poster: release.posterURL,title: release.title, date:release.sourceReleaseDate, source: release.sourceName, sources: [])
                         } label: {
                             MovieCoverView(release: release)
                                 .padding([.bottom, .leading])
@@ -105,7 +105,7 @@ struct HomeView: View {
                 ForEach(releases) { release in
                     if release.type == "tv_series" || release.type == "tv_miniseries"{
                         NavigationLink {
-                            MovieDetailsView(release: release)
+                            MovieDetailsView(poster: release.posterURL,title: release.title, date:release.sourceReleaseDate, source: release.sourceName, sources: [])
                         } label: {
                             MovieCoverView(release: release)
                                 .padding([.bottom, .leading])

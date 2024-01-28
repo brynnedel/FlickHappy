@@ -10,6 +10,22 @@ import SwiftUI
 struct Search_View: View {
     @FocusState private var focused: Bool?
     @StateObject private var vm = SearchViewModel()
+    
+    var givenType : String = ""
+    func getType(type: String) -> String {
+        switch type {
+            case "movie":
+                return "Movie"
+            case "tv_series":
+                return "Series"
+            case "tv_miniseries":
+                return "Mini Series"
+            case "short_film":
+                return "Short Film"
+            default:
+                return ""
+            }
+    }
 
     var body: some View {
         NavigationStack {
@@ -54,7 +70,9 @@ struct Search_View: View {
                         case .loading:
                             loadingView
                         case .success(let response):
-                            titleResult(response)
+                            result(response)
+                        case .detailSuccess(let details):
+                            MovieDetailsView(poster: details.poster, title: details.title, date: details.releaseDate, sources: details.sources, description: details.plotOverview)
                         case .error(let error):
                             errorView(error)
                         }
@@ -67,7 +85,7 @@ struct Search_View: View {
                     NavigationLink {
                         ExploreView()
                     } label: {
-                        Image(systemName: "gear")
+                        Image(systemName: "safari")
                             .font(.title)
                             .foregroundStyle(.black)
                     }
@@ -77,96 +95,47 @@ struct Search_View: View {
     }
     
     @ViewBuilder
-    private func titleResult(_ response: ConvertedSearch) -> some View {
+    private func result(_ response: SearchResponse) -> some View {
         ScrollView {
             VStack (alignment: .leading) {
-                ForEach(response.titleResults.indices, id: \.self) { index in
-                    NavigationLink {
-                        MovieDetailsView()
-                    } label: {
-                        HStack {
-                            AsyncImage(url: URL(string: response.titleResults[index].poster ?? "")) { image in
-                                image
-                                    .resizable()
-                                    .scaledToFit()
-                            } placeholder: {
-                                Color.gray
-                            }
-                            .frame(width: 100, height: 150)
-                            VStack (alignment: .leading){
-                                Text(response.titleResults[index].title)
-                                    .font(.title)
-                                ForEach(response.titleResults[index].genreNames, id:\.self) { genre in
-                                    Text (genre)
-                                        .font(.caption)
-                                        .padding(.bottom)
-                                }
-                                Text(response.titleResults[index].plotOverview ?? "")
-                            }
-                            Spacer()
+                ForEach(response.titleResults) { title in
+                    Button {
+                        Task {
+                            await vm.getTitleDetails(id: title.id)
                         }
-                        .frame(height: 170)
+                    } label: {
+                        RoundedRectangle(cornerRadius: 15)
+                            .foregroundStyle(Color("Accent"))
+                            .frame(height: 100)
+                            .overlay {
+                                VStack {
+                                    Text(title.name)
+                                        .font(.title2)
+                                    Text(self.getType(type: title.type))
+                                    
+                                }
+                            }
+                            .padding()
                     }
+                    .buttonStyle(.plain)
+                
                     Rectangle()
                         .frame(height: 1)
                         .foregroundStyle(.white)
                         .padding(.horizontal, 8)
                 }
             }
-            ForEach(response.peopleResults.indices, id: \.self) { index in
-                HStack {
-                    Rectangle()
-                        .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 150)
-                        .foregroundStyle(.gray)
-                        .padding()
-                    VStack (alignment: .leading){
-                        Text(response.peopleResults[index].fullName)
-                            .font(.title)
-                        Text("Sources")
-                            .font(.caption)
-                        Text ("Genres")
-                            .font(.caption)
-                            .padding(.bottom)
-                        Text("Description")
+            ForEach(response.peopleResults) {person in
+                RoundedRectangle(cornerRadius: 15)
+                    .foregroundStyle(Color("Accent"))
+                    .frame(height: 100)
+                    .overlay {
+                        VStack {
+                            Text(person.name)
+                                .font(.title2)
+                        }
                     }
-                    Spacer()
-                }
-                .frame(height: 170)
-                Rectangle()
-                    .frame(height: 1)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 8)
-            }
-        }
-    }
-    
-    @ViewBuilder
-    private func peopleResult(_ people: [PeopleResult]) -> some View {
-        ScrollView {
-            ForEach(people) { person in
-                
-                HStack {
-                    Rectangle()
-                        .frame(width: /*@START_MENU_TOKEN@*/100/*@END_MENU_TOKEN@*/, height: 150)
-                        .foregroundStyle(.gray)
-                        .padding()
-                    VStack (alignment: .leading){
-                        Text(person.name)
-                            .font(.title)
-                        Text("Sources")
-                            .font(.caption)
-                        Text ("Genres")
-                            .font(.caption)
-                            .padding(.bottom)
-                        Text("Description")
-                    }
-                    Spacer()
-                }
-                .frame(height: 170)
-                Rectangle()
-                    .frame(height: 1)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 8)
+                    .padding()
             }
         }
     }

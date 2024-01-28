@@ -39,7 +39,7 @@ struct TitleDetails: Codable, Identifiable {
 //    let relevancePercentile: Double?
 //    let trailer: String?
 //    let trailerThumbnail: String?
-    let sources: [Source]?
+    let sources: [Source]
 
     enum CodingKeys: String, CodingKey {
         case id, title
@@ -74,34 +74,34 @@ struct TitleDetails: Codable, Identifiable {
 struct Source: Codable {
     let sourceID: Int
     let name: String?
-    let type: SourceTypeEnum?
-    let region: String?
-    let iosURL: String?
-    let androidURL: AndroidURLEnum?
+    let type: String?
+//    let region: String?
+//    let iosURL: String?
+    //let androidURL: AndroidURLEnum?
     let webURL: String?
-    let format: Format?
+//    let format: Format?
     let price: Double?
     let seasons: Int?
     let episodes: Int?
 
     enum CodingKeys: String, CodingKey {
         case sourceID = "source_id"
-        case name, type, region
-        case iosURL = "ios_url"
-        case androidURL = "android_url"
+        case name, type
+//        case iosURL = "ios_url"
+        //case androidURL = "android_url"
         case webURL = "web_url"
-        case format, price, seasons, episodes
+        case price, seasons, episodes
     }
 }
 
-enum AndroidURLEnum: String, Codable {
-    case deeplinksAvailableForPaidPlansOnly = "Deeplinks available for paid plans only."
-}
+//enum AndroidURLEnum: String, Codable {
+//    case deeplinksAvailableForPaidPlansOnly = "Deeplinks available for paid plans only."
+//}
 
-enum Format: String, Codable {
-    case hd = "HD"
-    case sd = "SD"
-}
+//enum Format: String, Codable {
+//    case hd = "HD"
+//    case sd = "SD"
+//}
 
 //enum Region: String, Codable {
 //    case au = "AU"
@@ -111,11 +111,6 @@ enum Format: String, Codable {
 //    case us = "US"
 //}
 
-enum SourceTypeEnum: String, Codable {
-    case buy = "buy"
-    case rent = "rent"
-    case sub = "sub"
-}
 
 
 // MARK: - SearchResponse

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ExploreResultsView: View {
+    @ObservedObject var vm: ExploreViewModel
     var titles: [Title]
     
     var body: some View {
@@ -15,9 +16,32 @@ struct ExploreResultsView: View {
             ZStack {
                 Color("Background")
                     .ignoresSafeArea()
-                VStack (alignment: .leading){
+                VStack (alignment: .leading) {
                     ForEach(titles) { title in
-                        Text(title.title)
+                        Button {
+                            Task {
+                                await vm.getTitleDetails(id: title.id)
+                            }
+                        } label: {
+                            RoundedRectangle(cornerRadius: 15)
+                                .foregroundStyle(Color("Accent"))
+                                .frame(height: 100)
+                                .overlay {
+                                    VStack {
+                                        Text(title.name)
+                                            .font(.title2)
+                                        Text(self.getType(type: title.type))
+                                        
+                                    }
+                                }
+                                .padding()
+                        }
+                        .buttonStyle(.plain)
+                    
+                        Rectangle()
+                            .frame(height: 1)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 8)
                     }
                 }
             }
@@ -26,5 +50,5 @@ struct ExploreResultsView: View {
 }
 
 #Preview {
-    ExploreResultsView(titles: ExploreViewModel.example)
+    ExploreResultsView(vm: ExploreViewModel(), titles: ExploreViewModel.example)
 }

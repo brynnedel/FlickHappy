@@ -10,9 +10,11 @@ import Foundation
 enum SearchLoadingState {
     case idle
     case loading
-    case success(ConvertedSearch: ConvertedSearch)
+    case success(SearchResponse: SearchResponse)
+    case detailSuccess(TitleDetails: TitleDetails)
     case error(error: Error)
 }
+
 
 struct ConvertedSearch {
     var titleResults: [TitleDetails] = []
@@ -29,19 +31,31 @@ class SearchViewModel: ObservableObject {
             do {
                 self.state = .loading
                 let response = try await MovieService.getSearch(searchTerm: searchTerm)
-                var converted = ConvertedSearch()
-                for result in response.titleResults {
-                    let titleDetails = try await MovieService.getTitleDetails(id: result.id)
-                    converted.titleResults.append(titleDetails)
-                }
+//                var converted = ConvertedSearch()
+//                for result in response.titleResults {
+//                    let titleDetails = try await MovieService.getTitleDetails(id: result.id)
+//                    converted.titleResults.append(titleDetails)
+//                }
 //                print("after first for loop")
 //                print("converted w/ title: \(converted)")
-                for result in response.peopleResults {
-                    let personResponse = try await MovieService.getPersonDetails(id: result.id)
-                    converted.peopleResults.append(personResponse)
-                }
+//                for result in response.peopleResults {
+//                    let personResponse = try await MovieService.getPersonDetails(id: result.id)
+//                    converted.peopleResults.append(personResponse)
+//                }
 //                print("converted w/ people: \(converted)")
-                self.state = .success(ConvertedSearch: converted)
+                self.state = .success(SearchResponse: response)
+            } catch {
+                self.state = .error(error: error)
+            }
+        }
+    }
+    
+    func getTitleDetails(id: Int) async {
+        Task {
+            do {
+                self.state = .loading
+                let details = try await MovieService.getTitleDetails(id: id)
+                self.state = .detailSuccess(TitleDetails: details)
             } catch {
                 self.state = .error(error: error)
             }

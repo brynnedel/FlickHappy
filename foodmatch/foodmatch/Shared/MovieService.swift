@@ -146,8 +146,6 @@ struct MovieService {
             print("this is the error: \(error.localizedDescription)")
             throw error
         }
-        
-        return []
     }
     
     private static func printData(data: Data) {

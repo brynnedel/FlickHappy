@@ -8,9 +8,16 @@
 import SwiftUI
 
 struct MovieDetailsView: View {
-    @EnvironmentObject private var vm: ReleasesViewModel
-    var release: Release?
-    var title: TitleDetails?
+    var poster: String?
+    var title: String?
+    var date: String?
+    var source: String?
+    var sources: [Source]
+    var description: String?
+    
+    var possibleSources: [String] = [
+        "Netflix", "Hulu", "Prime Video", "Max", "Apple TV"
+    ]
     
     var body: some View {
         NavigationStack {
@@ -19,28 +26,56 @@ struct MovieDetailsView: View {
                     .ignoresSafeArea()
                 VStack (alignment: .leading){
                     HStack (alignment: .top){
-                        if (release != nil) {
-                            AsyncImage(url: URL(string: release?.posterURL ?? "")) { image in
+                        if (poster != nil) {
+                            AsyncImage(url: URL(string: poster ?? "")) { image in
                                 image
                                     .resizable()
                                     .scaledToFit()
                             } placeholder: {
-                                // Placeholder while loading or if there's an error
                                 Color.gray
                             }
                             .frame(width: 100, height: 150)
                             
                             VStack (alignment: .leading){
-                                Text(release?.title ?? "")
+                                Text(title ?? "")
                                     .font(.title2)
                                     .padding(.bottom, 4)
-                                Text(release?.sourceName ?? "")
+                                ForEach(possibleSources, id: \.self) {option in
+                                    if sources.contains(where: { $0.name == option }) {
+                                        Text(option)
+                                            .font(.callout)
+                                    }
+                                }
+                                Text(source ?? "")
                                     .font(.callout)
-                                Text(release?.sourceReleaseDate ?? "")
+                                Text(date ?? "")
                                     .font(.caption)
                             }
                         }
+                        Spacer()
                     }
+                    .padding(.horizontal)
+
+                    Rectangle()
+                        .frame(height: 1)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal)
+                    
+                    Text("Description")
+                        .font(.title3)
+                        .padding([.horizontal, .top])
+                    RoundedRectangle(cornerRadius: 15)
+                        .foregroundStyle(Color("Accent"))
+                        .frame(height: 250)
+                        .overlay {
+                            VStack (alignment: .leading){
+
+                                Text(description ?? "Description unavailable at this time.")
+                                    .font(.callout)
+                                    .padding()
+                            }
+                        }
+                    
                     Spacer()
                 }
             }
@@ -49,5 +84,5 @@ struct MovieDetailsView: View {
 }
 
 #Preview {
-    MovieDetailsView(release: ReleasesViewModel.example)
+    MovieDetailsView(sources: [])
 }
